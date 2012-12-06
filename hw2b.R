@@ -1,3 +1,4 @@
+graphics.off()
 set.seed(239)
 a = 0.3
 
@@ -22,7 +23,7 @@ calcAns <- function(Finv, N, R) {
 calcDist <- function(Finv, N, M, R) {
   return (replicate(M, calcAns(Finv, N, R)))
 }
-Ra <- function(x) return (abs(x))
+Rabs <- function(x) return (abs(x))
 Rplus <- function(x) return (x)
 Rminus <- function(x) return (-x)
 
@@ -30,20 +31,28 @@ Rminus <- function(x) return (-x)
 f1 <- function(x) {return (qgamma(x, 2, 1))}
 f2 <- function(x) {return (qexp(x, 2))}
 windows()
-curve(f1, xlim = c(0, 1), col = "blue", xlab = "x", ylab = "q(x)", main = "Quantile functions for two different distributions")
+curve(f1, xlim = c(0, 1), col = "red", xlab = "x", ylab = "q(x)", 
+      main = "Quantile functions for two different distributions")
+curve(f2, xlim = c(0, 1), col = "blue", add = TRUE)
 legend("topleft", c("Gamma distribution (2, 1)", "Exponential distribution (2)"), bty="n",
-       fill = c("blue", "red"))
-curve(f2, xlim = c(0, 1), col = "red", add = TRUE)
+       fill = c("red", "blue"))
 
-#plot(ecdf(calcDist(f1, 400, 400, Ra)), col = "red", do.points=FALSE, lwd = 2, xlab="x", ylab="F(x)", main=expression(paste("Ecdf of R"[n], " for different F(x) (n = 400, a = 0.3)")))
-#plot(ecdf(calcDist(f2, 400, 400, Ra)), add = TRUE, col = "blue", do.points=FALSE, lwd = 2)
+windows()
+plot(ecdf(calcDist(f1, 100, 1000, Rabs)), col = "red", do.points=FALSE, lwd = 2, xlab="x", ylab="F(x)", 
+     main=expression(paste("Ecdf of R"[n], " for different distributions (N = 100, M = 1000, a = 0.3)")))
+plot(ecdf(calcDist(f2, 100, 1000, Rabs)), add = TRUE, col = "blue", do.points=FALSE, lwd = 2)
+legend("topleft", c("Gamma distribution (2, 1)", "Exponential distribution (2)"), bty="n",
+       fill = c("red", "blue"))
 
+windows()
+plot(ecdf(calcDist(f1, 100, 1000, Rplus)), col = "red", do.points=FALSE, lwd = 2, , xlab="x", ylab="F(x)", 
+     main=expression(paste("Ecdf for R"[n]^'+', " and its limit")))
+curve(pmax(2 * pnorm(x * sqrt(a / (1 - a))) - 1, 0) , col = "blue", lwd = 2, add = TRUE)
 
-#plot(ecdf(calcDist(f1, 100, 3200, Rplus)), col = "red", do.points=FALSE, lwd = 2, , xlab="x", ylab="F(x)", main=expression(paste("Ecdf for R"[n]^'+', " and ")))
-#curve(pmax(2 * pnorm(x * sqrt(a / (1 - a))) - 1, 0) , col = "blue", lwd = 2, add = TRUE)
+legend("right", c("Gamma distribution (2, 1)", expression(textstyle(max) + bgroup("(", 2 %.% Phi + bgroup("(", x %.% sqrt(frac(a , 1 - a)) ,")") - 1 + ", 0" ,")")  )) , bty="n",
+       fill = c("red", "blue"))
 
-
-
+#expression(bgroup("(", 2 %.% Phi(x %.% sqrt(frac(a , (1 - a)))) - 1, 0) ,")")
 #plot(ecdf(calcDist(f1, 100, 100, Ra)), col = "red", do.points=FALSE, lwd = 2)
 #plot(ecdf(calcDist(f1, 100, 200, Ra)), col = "green", do.points=FALSE, lwd = 2, add = TRUE)
 #plot(ecdf(calcDist(f1, 100, 400, Ra)), col = "blue", do.points=FALSE, lwd = 2, add = TRUE)
